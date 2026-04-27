@@ -9,6 +9,7 @@ import recipes.repository.RecipeRepository;
 import recipes.service.RecipeService;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/recipe")
@@ -20,19 +21,22 @@ public class RecipeController {
     }
 
 
-    @PostMapping
-    public ResponseEntity<?> save(@Valid @RequestBody RecipeDTO recipeDTO) {
-        recipeService.save(recipeDTO);
-        return ResponseEntity.ok().build();
+    @PostMapping("/new")
+    public ResponseEntity<Map<String,Long>> save(@RequestBody RecipeDTO recipeDTO) {
+        Long id = recipeService.save(recipeDTO);
+        return ResponseEntity.ok(Map.of("id",id));
     }
 
 //    @GetMapping
 //    public ResponseEntity<List<RecipeDTO>> findAll() {
 //        return ResponseEntity.ok().body(recipeService.findAll());
 //    }
-    @GetMapping
-    public RecipeDTO findById() {
-        List<RecipeDTO> recipeDTO = recipeService.findAllDesc();
-        return recipeDTO.getFirst();
+    @GetMapping("/{id}")
+    public ResponseEntity<RecipeDTO> findById(@PathVariable Long id) {
+        RecipeDTO recipeDTO = recipeService.findById(id);
+        if(recipeDTO.getName() == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().body(recipeDTO);
     }
 }

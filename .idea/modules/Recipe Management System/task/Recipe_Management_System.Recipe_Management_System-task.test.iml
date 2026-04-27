@@ -14,7 +14,7 @@
     <content url="file://$MODULE_DIR$/../../../../Recipe Management System/task/test">
       <sourceFolder url="file://$MODULE_DIR$/../../../../Recipe Management System/task/test" isTestSource="true" />
     </content>
-    <orderEntry type="jdk" jdkName="23" jdkType="JavaSDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Recipe_Management_System.Recipe_Management_System-task.main" />
     <orderEntry type="module" module-name="Recipe_Management_System.util.main" />

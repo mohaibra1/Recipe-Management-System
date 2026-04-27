@@ -19,7 +19,7 @@
       <sourceFolder url="file://$MODULE_DIR$/../../../../Recipe Management System/task/src/generated" isTestSource="false" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/../../../../Recipe Management System/task/src/resources" type="java-resource" />
     </content>
-    <orderEntry type="jdk" jdkName="23" jdkType="JavaSDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="Gradle: org.projectlombok:lombok:1.18.30" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-actuator:3.5.9" level="project" />

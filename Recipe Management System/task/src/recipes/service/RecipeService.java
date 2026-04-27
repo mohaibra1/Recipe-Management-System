@@ -18,13 +18,14 @@ public class RecipeService {
         this.recipeRepository = recipeRepository;
     }
 
-    public void save(RecipeDTO recipeDTO) {
+    public Long save(RecipeDTO recipeDTO) {
         Recipe recipe = new Recipe();
         recipe.setName(recipeDTO.getName());
         recipe.setDescription(recipeDTO.getDescription());
         recipe.setIngredients(recipeDTO.getIngredients());
         recipe.setDirections(recipeDTO.getDirections());
         recipeRepository.save(recipe);
+        return recipe.getId();
     }
 
     public List<RecipeDTO> findAllDesc() {
