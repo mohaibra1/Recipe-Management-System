@@ -36,21 +36,26 @@ public class RecipeService {
     }
 
     public RecipeDTO findById(Long id) {
-        RecipeDTO recipeDTO = new RecipeDTO();
-        Optional<Recipe> recipe = recipeRepository.findById(id);
-        if (recipe.isPresent()) {
-            recipeDTO.setName(recipe.get().getName());
-            recipeDTO.setDescription(recipe.get().getDescription());
-            recipeDTO.setIngredients(recipe.get().getIngredients());
-            recipeDTO.setDirections(recipe.get().getDirections());
-        }
-        return recipeDTO;
+        return recipeRepository.findById(id)
+                .map(recipe -> {
+                    RecipeDTO dto = new RecipeDTO();
+                    dto.setName(recipe.getName());
+                    dto.setDescription(recipe.getDescription());
+                    dto.setIngredients(recipe.getIngredients());
+                    dto.setDirections(recipe.getDirections());
+                    return dto;
+                })
+                .orElse(null); // Return null if not found
     }
 
     public List<RecipeDTO> findAll() {
         List<Recipe> recipes =  recipeRepository.findAll();
 
         return convertToDTO(recipes);
+    }
+
+    public void deleteById(Long id) {
+        recipeRepository.deleteById(id);
     }
 
     public List<RecipeDTO> convertToDTO(List<Recipe> recipes) {

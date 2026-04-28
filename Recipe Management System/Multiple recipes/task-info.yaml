@@ -10,11 +10,10 @@ files:
     visible: true
     learner_created: false
   - name: test/RecipesApplicationTest.java
-    visible: true
     learner_created: false
+  - name: src/recipes/service/RecipeService.java
+    visible: true
+    learner_created: true
 feedback_link: https://hyperskill.org/projects/180/stages/918/implement#comment
 status: Solved
-feedback:
-  message: Congratulations!
-  time: "Mon, 27 Apr 2026 20:41:05 UTC"
 record: -1

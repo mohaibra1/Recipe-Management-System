@@ -7,6 +7,7 @@ files:
     visible: true
     learner_created: false
   - name: test/RecipesApplicationTest.java
+    visible: true
     learner_created: false
   - name: build.gradle
     visible: true
