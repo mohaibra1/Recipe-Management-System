@@ -28,6 +28,25 @@ public class RecipeController {
         return ResponseEntity.ok(Map.of("id",id));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> update(@PathVariable Long id, @Valid @RequestBody RecipeDTO recipeDTO) {
+        recipeService.update(id, recipeDTO);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/search/")
+    public ResponseEntity<List<RecipeDTO>> search(@RequestParam(required = false) String category,
+                                                  @RequestParam(required = false) String name){
+        // Check for "0 parameters or more than 1" constraint
+        if ((category == null && name == null) || (category != null && name != null)) {
+            return ResponseEntity.badRequest().build();
+        }
+        if (category != null) {
+            return ResponseEntity.ok(recipeService.findByCategory(category));
+        } else {
+            return ResponseEntity.ok(recipeService.findByName(name));
+        }
+    }
 //    @GetMapping
 //    public ResponseEntity<List<RecipeDTO>> findAll() {
 //        return ResponseEntity.ok().body(recipeService.findAll());
@@ -42,7 +61,7 @@ public class RecipeController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
        RecipeDTO recipeDTO = recipeService.findById(id);
 
         if(recipeDTO ==  null){

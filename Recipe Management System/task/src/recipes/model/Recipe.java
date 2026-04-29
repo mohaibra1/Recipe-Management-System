@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -22,6 +23,10 @@ public class Recipe {
     @NotBlank
     private String name;
     @NotBlank
+    private String category;
+    @NotNull
+    private LocalDateTime date;
+    @NotBlank
     private String description;
     @NotNull
     @Size(min = 1)
@@ -29,4 +34,5 @@ public class Recipe {
     @NotNull
     @Size(min = 1)
     private List<String> directions;
+
 }

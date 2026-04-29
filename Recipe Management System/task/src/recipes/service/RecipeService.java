@@ -1,10 +1,13 @@
 package recipes.service;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import recipes.dto.RecipeDTO;
 import recipes.model.Recipe;
 import recipes.repository.RecipeRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +24,8 @@ public class RecipeService {
     public Long save(RecipeDTO recipeDTO) {
         Recipe recipe = new Recipe();
         recipe.setName(recipeDTO.getName());
+        recipe.setCategory(recipeDTO.getCategory());
+        recipe.setDate(LocalDateTime.now());
         recipe.setDescription(recipeDTO.getDescription());
         recipe.setIngredients(recipeDTO.getIngredients());
         recipe.setDirections(recipeDTO.getDirections());
@@ -40,6 +45,8 @@ public class RecipeService {
                 .map(recipe -> {
                     RecipeDTO dto = new RecipeDTO();
                     dto.setName(recipe.getName());
+                    dto.setCategory(recipe.getCategory());
+                    dto.setDate(recipe.getDate());
                     dto.setDescription(recipe.getDescription());
                     dto.setIngredients(recipe.getIngredients());
                     dto.setDirections(recipe.getDirections());
@@ -49,9 +56,30 @@ public class RecipeService {
     }
 
     public List<RecipeDTO> findAll() {
-        List<Recipe> recipes =  recipeRepository.findAll();
+        return convertToDTO(recipeRepository.findAll());
+    }
 
-        return convertToDTO(recipes);
+    public List<RecipeDTO> findByCategory(String category) {
+        return convertToDTO(recipeRepository.findByCategoryIgnoreCaseOrderByDateDesc(category));
+    }
+
+    public List<RecipeDTO> findByName(String name) {
+        return convertToDTO(recipeRepository.findByNameContainingIgnoreCaseOrderByDateDesc(name));
+    }
+
+    public void update(Long id, RecipeDTO recipeDTO) {
+        Recipe recipe = recipeRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        // Update fields from DTO
+        recipe.setName(recipeDTO.getName());
+        recipe.setCategory(recipeDTO.getCategory());
+        recipe.setDescription(recipeDTO.getDescription());
+        recipe.setIngredients(recipeDTO.getIngredients());
+        recipe.setDirections(recipeDTO.getDirections());
+        recipe.setDate(LocalDateTime.now()); // Update the date field
+
+        recipeRepository.save(recipe);
     }
 
     public void deleteById(Long id) {
@@ -63,6 +91,8 @@ public class RecipeService {
         for(Recipe createdRecipe : recipes) {
             RecipeDTO createdRecipeDTO = new RecipeDTO();
             createdRecipeDTO.setName(createdRecipe.getName());
+            createdRecipeDTO.setCategory(createdRecipe.getCategory());
+            createdRecipeDTO.setDate(createdRecipe.getDate());
             createdRecipeDTO.setDescription(createdRecipe.getDescription());
             createdRecipeDTO.setIngredients(createdRecipe.getIngredients());
             createdRecipeDTO.setDirections(createdRecipe.getDirections());
@@ -71,4 +101,5 @@ public class RecipeService {
         }
         return recipeDTOs;
     }
+
 }
