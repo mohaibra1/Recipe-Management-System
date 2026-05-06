@@ -34,5 +34,7 @@ public class Recipe {
     @NotNull
     @Size(min = 1)
     private List<String> directions;
+    @Column(name = "author_email")
+    private String authorEmail;
 
 }

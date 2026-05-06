@@ -1,16 +1,20 @@
 package recipes.controller;
 
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import recipes.dto.RecipeDTO;
 import recipes.model.Recipe;
-import recipes.repository.RecipeRepository;
 import recipes.service.RecipeService;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/api/recipe")
@@ -23,13 +27,25 @@ public class RecipeController {
 
 
     @PostMapping("/new")
-    public ResponseEntity<Map<String,Long>> save(@Valid @RequestBody RecipeDTO recipeDTO) {
-        Long id = recipeService.save(recipeDTO);
-        return ResponseEntity.ok(Map.of("id",id));
+    public ResponseEntity<Map<String, Long>> save(
+            @Valid @RequestBody RecipeDTO recipeDTO,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        Long id = recipeService.save(recipeDTO, userDetails.getUsername());
+        return ResponseEntity.ok(Map.of("id", id));
     }
 
+
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable Long id, @Valid @RequestBody RecipeDTO recipeDTO) {
+    public ResponseEntity<Void> update(@PathVariable Long id, @Valid @RequestBody RecipeDTO recipeDTO,
+                                       @AuthenticationPrincipal UserDetails userDetails) {
+        Recipe recipe = recipeService.findRecipeById(id);
+        if(recipe == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        if (!recipe.getAuthorEmail().equals(userDetails.getUsername())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
         recipeService.update(id, recipeDTO);
         return ResponseEntity.noContent().build();
     }
@@ -61,13 +77,14 @@ public class RecipeController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id,
+                                       Authentication authentication) {
        RecipeDTO recipeDTO = recipeService.findById(id);
 
         if(recipeDTO ==  null){
             return ResponseEntity.notFound().build();
         }
-        recipeService.deleteById(id);
+        recipeService.deleteById(id,authentication.getName());
 
         return ResponseEntity.noContent().build();
     }

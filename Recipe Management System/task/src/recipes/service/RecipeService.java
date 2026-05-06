@@ -21,16 +21,18 @@ public class RecipeService {
         this.recipeRepository = recipeRepository;
     }
 
-    public Long save(RecipeDTO recipeDTO) {
+
+    public Long save(RecipeDTO dto, String userEmail) {
         Recipe recipe = new Recipe();
-        recipe.setName(recipeDTO.getName());
-        recipe.setCategory(recipeDTO.getCategory());
+        // map dto fields to recipe...
+        recipe.setName(dto.getName());
+        recipe.setCategory(dto.getCategory());
         recipe.setDate(LocalDateTime.now());
-        recipe.setDescription(recipeDTO.getDescription());
-        recipe.setIngredients(recipeDTO.getIngredients());
-        recipe.setDirections(recipeDTO.getDirections());
-        recipeRepository.save(recipe);
-        return recipe.getId();
+        recipe.setDescription(dto.getDescription());
+        recipe.setIngredients(dto.getIngredients());
+        recipe.setDirections(dto.getDirections());
+        recipe.setAuthorEmail(userEmail);
+        return recipeRepository.save(recipe).getId();
     }
 
     public List<RecipeDTO> findAllDesc() {
@@ -53,6 +55,11 @@ public class RecipeService {
                     return dto;
                 })
                 .orElse(null); // Return null if not found
+    }
+
+    public Recipe findRecipeById(Long id) {
+        return recipeRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     public List<RecipeDTO> findAll() {
@@ -82,7 +89,13 @@ public class RecipeService {
         recipeRepository.save(recipe);
     }
 
-    public void deleteById(Long id) {
+    public void deleteById(Long id, String currentUserEmail) {
+        Recipe recipe = recipeRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        if (!recipe.getAuthorEmail().equals(currentUserEmail)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
         recipeRepository.deleteById(id);
     }
 
